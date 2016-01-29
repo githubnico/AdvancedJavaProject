@@ -1,6 +1,5 @@
 package Model;
 
-import View.MoleculeMesh;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Cylinder;
@@ -53,12 +52,6 @@ public abstract class AResidue {
      */
     abstract public void addToStructure(Structure myStructure);
 
-    /**
-     * Adds the Shape3D of the current Residue to its MoleculeMesh
-     * @param myMoleculeMesh
-     * @param myShape3D
-     */
-    abstract public void addToMoleculeMesh(MoleculeMesh myMoleculeMesh, Shape3D myShape3D );
 
     // END abstract
 
@@ -77,7 +70,7 @@ public abstract class AResidue {
      * @return
      */
     public Atom getAtom(String atomName) {
-            return myAtoms.get(atomName);
+        return myAtoms.get(atomName);
     }
 
 
@@ -154,6 +147,14 @@ public abstract class AResidue {
         line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
 
         return line;
+    }
+
+    /**
+     * Returns the Residue Type of the Residue
+     * @return
+     */
+    public char getResidueType(){
+        return myAtoms.values().iterator().next().getAtomResidue();
     }
 
 

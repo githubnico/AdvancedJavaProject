@@ -1,6 +1,5 @@
 package Model;
 
-import View.MoleculeMesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Shape3D;
 
@@ -37,8 +36,5 @@ public class Cytosine extends AResidue {
         myStructure.addResidue(this);
     }
 
-    @Override
-    public void addToMoleculeMesh(MoleculeMesh myMoleculeMesh, Shape3D myShape3D) {
-        myMoleculeMesh.addCytosine(myShape3D);
-    }
+
 }

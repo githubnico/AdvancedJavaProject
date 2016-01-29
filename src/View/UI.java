@@ -12,13 +12,12 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Shape3D;
-import javafx.scene.shape.Sphere;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.FileChooser;
@@ -26,6 +25,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -40,7 +40,6 @@ public class UI extends Application{
 
     //Contains all Residues to be drawn
     Structure myStructure;
-    MoleculeMesh myMolecleMesh;
 
     // for rotation
     double originX;
@@ -101,6 +100,10 @@ public class UI extends Application{
         sequenceArea.setWrapText(true);
         sequenceArea.setStyle("-fx-font-family: monospace");
 
+        // 2D Pane
+        Pane drawPane = new Pane();
+
+
         // 3D Pane
         Text text3D = new Text(myValues.NO_FILE_SELECTED);
         StackPane stackPane = new StackPane();
@@ -109,14 +112,13 @@ public class UI extends Application{
         stackPane.getChildren().addAll(drawSubScene, text3D);
 
         myStructure = new Structure();
-        myMolecleMesh = new MoleculeMesh();
 
         isGreenPhosphorus = true;
 
 
         // Panes and accordion
         TitledPane sequencePane = new TitledPane(myValues.PANE_SEQUENCE, sequenceArea);
-        TitledPane structure2DPane = new TitledPane(myValues.PANE_2D_STRUCTURE, new Text("In Progress"));
+        TitledPane structure2DPane = new TitledPane(myValues.PANE_2D_STRUCTURE, drawPane);
         TitledPane structure3DPane = new TitledPane(myValues.PANE_3D_STRUCTURE, stackPane);
 
         sequencePane.setExpanded(false);
@@ -149,7 +151,9 @@ public class UI extends Application{
                         try {
                             text3D.setText(file.getName());
                             ArrayList<Atom> myAtoms = new PDB_Reader().readInFile(file);
-                            sequenceArea.setText(generateSequence(myAtoms));
+                            myStructure.generateResiduesbyAtoms(myAtoms);
+                            myStructure.generateSequence();
+                            sequenceArea.setText(myStructure.getMySequence());
                             setAtomCoordinates(myAtoms, draw3DRoot);
                             text3D.setText(file.getName());
                             // open accordion
@@ -164,8 +168,16 @@ public class UI extends Application{
 
         // Watson-Crick Pairing
         seqPairingItem.setOnAction((value)->{
-            //TODO implement that!
-            dialogInProgress();
+            final double[][][] coordsRepresentation = {new double[1][2]};
+            Graph myGraph = new Graph();
+            try {
+                myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
+            } catch (IOException e) {
+
+            }
+            coordsRepresentation[0] = SpringEmbedder.computeSpringEmbedding(myValues.NUSSINOV_ITERATIONS, myGraph.getNumberOfNodes(), myGraph.getEdges(), null);
+            SpringEmbedder.centerCoordinates(coordsRepresentation[0], 50, 550, 50, 550);
+            drawShapes(drawPane, coordsRepresentation[0], myGraph.getEdges(), myGraph.getNumberOfNodes());
         });
 
         // Reset View Menuitem
@@ -175,17 +187,17 @@ public class UI extends Application{
 
         // Set color Handlers
         coloringAGCUItem.setOnAction((value) ->{
-            colorAllShape3D(myMolecleMesh.getMyAdenines(), myValues.MATERIAL_BLUE);
-            colorAllShape3D(myMolecleMesh.getMyGuanines(), myValues.MATERIAL_GREEN);
-            colorAllShape3D(myMolecleMesh.getMyCytosines(), myValues.MATERIAL_RED);
-            colorAllShape3D(myMolecleMesh.getMyUracils(), myValues.MATERIAL_YELLOW);
+            colorAllShape3D(myStructure.filterShape3DByType('A'), myValues.MATERIAL_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByType('G'), myValues.MATERIAL_GREEN);
+            colorAllShape3D(myStructure.filterShape3DByType('C'), myValues.MATERIAL_RED);
+            colorAllShape3D(myStructure.filterShape3DByType('U'), myValues.MATERIAL_YELLOW);
         });
 
         coloringPurinePyrimidineItem.setOnAction((value) ->{
-            colorAllShape3D(myMolecleMesh.getMyAdenines(), myValues.MATERIAL_BLUE);
-            colorAllShape3D(myMolecleMesh.getMyGuanines(), myValues.MATERIAL_DARK_BLUE);
-            colorAllShape3D(myMolecleMesh.getMyCytosines(), myValues.MATERIAL_RED);
-            colorAllShape3D(myMolecleMesh.getMyUracils(), myValues.MATERIAL_DARK_RED);
+            colorAllShape3D(myStructure.filterShape3DByType('A'), myValues.MATERIAL_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByType('G'), myValues.MATERIAL_DARK_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByType('C'), myValues.MATERIAL_RED);
+            colorAllShape3D(myStructure.filterShape3DByType('U'), myValues.MATERIAL_DARK_RED);
         });
 
         // TODO right coloring (based on pairing)
@@ -199,11 +211,12 @@ public class UI extends Application{
             public void changed(ObservableValue ov,
                                 Boolean old_val, Boolean new_val) {
                 if(new_val){
-                    colorAllShape3D(myMolecleMesh.getMyPhosporus(), myValues.MATERIAL_SEA_GREEN);
-                    colorAllShape3D(myMolecleMesh.getMyPhosphorusLines(), myValues.MATERIAL_SEA_GREEN);
+                    //TODO get phosphorus
+                //    colorAllShape3D(myMolecleMesh.getMyPhosporus(), myValues.MATERIAL_SEA_GREEN);
+                //    colorAllShape3D(myMolecleMesh.getMyPhosphorusLines(), myValues.MATERIAL_SEA_GREEN);
                 } else {
-                    colorAllShape3D(myMolecleMesh.getMyPhosporus(), myValues.MATERIAL_GRAY);
-                    colorAllShape3D(myMolecleMesh.getMyPhosphorusLines(), myValues.MATERIAL_GRAY);
+                //    colorAllShape3D(myMolecleMesh.getMyPhosporus(), myValues.MATERIAL_GRAY);
+                //    colorAllShape3D(myMolecleMesh.getMyPhosphorusLines(), myValues.MATERIAL_GRAY);
                 }
                 isGreenPhosphorus = new_val;
             }
@@ -259,29 +272,6 @@ public class UI extends Application{
     private void setAtomCoordinates(ArrayList<Atom> myAtoms, Group myGroup) {
 
 
-        // Current Residue Index for while loop
-        int currentResidueIndex = myAtoms.get(0).getAtomResidueIndex();
-        AResidue currentResidue = constructResidueWithType(myAtoms.get(0));
-
-        for (int i = 0; i < myAtoms.size(); i++) {
-
-            // As long as the atom belongs to the same residue, add it to current residue
-            while (i < myAtoms.size() - 1 && currentResidueIndex == myAtoms.get(i).getAtomResidueIndex()) {
-                currentResidue.addAtom(myAtoms.get(i));
-                i++;
-            }
-
-            // save completed residue
-            currentResidue.addToStructure(myStructure);
-
-            if (i < myAtoms.size()) {
-                // generate new Residue based on the Residue type
-                currentResidue = constructResidueWithType(myAtoms.get(i));
-                currentResidue.addAtom(myAtoms.get(i));
-                currentResidueIndex = myAtoms.get(i).getAtomResidueIndex();
-            }
-        }
-
 
         // used for lines between phosphorus
         int residueIndex = -1;
@@ -307,7 +297,8 @@ public class UI extends Application{
                         line.setMaterial(myValues.MATERIAL_GRAY);
                     }
                     myGroup.getChildren().add(line);
-                    myMolecleMesh.addPhosphorusLine(line);
+                    myStructure.add3DotherShape(line);
+                    //myMolecleMesh.addPhosphorusLine(line);
                     oldAtom = newAtom;
                     residueIndex = newAtom.getAtomResidueIndex();
                 } else {
@@ -322,12 +313,12 @@ public class UI extends Application{
             MeshView currentBaseView = myResidue.generateBaseMesh();
             currentBaseView.setMaterial(myValues.MATERIAL_DARK_RED);
             currentBaseView.setDrawMode(DrawMode.FILL);
-            myResidue.addToMoleculeMesh(myMolecleMesh, currentBaseView);
+            myStructure.add3DResidueShape(currentBaseView);
             //generate sugar
             MeshView currentSugarView = myResidue.generateSugarMesh();
             currentSugarView.setMaterial(myValues.MATERIAL_ORANGE);
             currentSugarView.setDrawMode(DrawMode.FILL);
-            myMolecleMesh.addSugar(currentSugarView);
+            myStructure.add3DotherShape(currentSugarView);
             // handle phosphorus
             Shape3D currentPhosphorus = new Sphere(myValues.PHOSPHORUS_WIDTH);
             if (myResidue.generatePhosphorusMesh(currentPhosphorus)) {
@@ -337,12 +328,12 @@ public class UI extends Application{
                     currentPhosphorus.setMaterial(myValues.MATERIAL_GRAY);
                 }
                 myGroup.getChildren().add(currentPhosphorus);
-                myMolecleMesh.addPhosphorus(currentPhosphorus);
+                myStructure.add3DotherShape(currentPhosphorus);
             }
             // generate line between sugar and base
             Shape3D baseSugarLine = myResidue.generateLine();
             baseSugarLine.setMaterial(myValues.MATERIAL_BLACK);
-            myMolecleMesh.addLine(baseSugarLine);
+            myStructure.add3DotherShape(baseSugarLine);
 
             // generate line to phosphorus
             // P, O5', C5', C4'
@@ -354,9 +345,9 @@ public class UI extends Application{
                 line2.setMaterial(myValues.MATERIAL_BLACK);
                 line3.setMaterial(myValues.MATERIAL_BLACK);
                 myGroup.getChildren().addAll(line1, line2, line3);
-                myMolecleMesh.addLine(line1);
-                myMolecleMesh.addLine(line2);
-                myMolecleMesh.addLine(line3);
+                myStructure.add3DotherShape(line1);
+                myStructure.add3DotherShape(line2);
+                myStructure.add3DotherShape(line3);
             } catch(Exception e){
 
             };
@@ -370,27 +361,6 @@ public class UI extends Application{
     }
 
 
-    /**
-     * generate Residue according to char
-     *
-     * @param a
-     * @return
-     */
-    private AResidue constructResidueWithType(Atom a) {
-
-        switch (Character.toLowerCase(a.getAtomResidue())) {
-            case 'a':
-                return new Adenine();
-            case 'u':
-                return new Uracil();
-            case 'g':
-                return new Guanine();
-            case 'c':
-                return new Cytosine();
-            default:
-                return null;
-        }
-    }
 
     /**
      * Center Group elements
@@ -509,4 +479,101 @@ public class UI extends Application{
         alert.setContentText("This feature is in progress");
         alert.showAndWait();
     }
+
+
+    /**
+     * Drawing function for Circles and Lines
+     *
+     * @param drawPane
+     * @param coords     Circle Coordinates
+     * @param edges      array of edges
+     * @param startIndex NumberOfNodes
+     */
+    private void drawShapes(Pane drawPane, double[][] coords, int[][] edges, int startIndex) {
+
+        // clear previous pane
+        drawPane.getChildren().clear();
+        ArrayList<Circle> circleList = new ArrayList<>();
+
+        // generate Circles
+        for (int i = 0; i < coords.length; i++) {
+            Circle currentCircle = new Circle(coords[i][0], coords[i][1], myValues.NODESIZE, Color.BLACK);
+            String toolTipText = "Node " + Integer.toString(i + 1);
+            // expand toolTip text with nucleotide and Circle color, if possible
+            if (myStructure.getMySequence().length() > i) {
+                toolTipText += ": " + myStructure.getMySequence().charAt(i);
+                currentCircle.setFill(getNodeColor(myStructure.getMySequence().charAt(i)));
+            }
+            Tooltip.install(
+                    currentCircle,
+                    new Tooltip(toolTipText)
+            );
+
+            circleList.add(currentCircle);
+        }
+
+
+        // generate  basic Lines
+        ArrayList<Line> lineList = new ArrayList<>();
+        for (int i = 0; i < circleList.size() - 1; i++) {
+            Line line = new Line();
+            line.setStroke(Color.BLACK);
+            line.setFill(Color.BLACK);
+            Circle circle1 = circleList.get(i);
+            Circle circle2 = circleList.get(i + 1);
+
+
+            // bind ends of line:
+            line.startXProperty().bind(circle1.centerXProperty().add(circle1.translateXProperty()));
+            line.startYProperty().bind(circle1.centerYProperty().add(circle1.translateYProperty()));
+            line.endXProperty().bind(circle2.centerXProperty().add(circle2.translateXProperty()));
+            line.endYProperty().bind(circle2.centerYProperty().add(circle2.translateYProperty()));
+
+            lineList.add(line);
+        }
+
+        // generate edges
+        for (int i = startIndex - 1; i < edges.length; i++) {
+            Line line = new Line();
+            line.setStroke(Color.ORANGE);
+            Circle circle1 = circleList.get(edges[i][0]);
+            Circle circle2 = circleList.get(edges[i][1]);
+
+            line.startXProperty().bind(circle1.centerXProperty().add(circle1.translateXProperty()));
+            line.startYProperty().bind(circle1.centerYProperty().add(circle1.translateYProperty()));
+            line.endXProperty().bind(circle2.centerXProperty().add(circle2.translateXProperty()));
+            line.endYProperty().bind(circle2.centerYProperty().add(circle2.translateYProperty()));
+
+            lineList.add(line);
+        }
+
+
+        drawPane.getChildren().addAll(lineList);
+        drawPane.getChildren().addAll(circleList);
+
+
+    }
+
+    /**
+     * Generate Color according to nucleotide
+     *
+     * @param c nucleotide
+     * @return nucleotide color
+     */
+    private Color getNodeColor(char c) {
+        switch (Character.toLowerCase(c)) {
+            case 'a':
+                return Color.LIGHTSEAGREEN;
+            case 'u':
+                return Color.DARKBLUE;
+            case 'c':
+                return Color.LAWNGREEN;
+            case 'g':
+                return Color.DARKGREEN;
+            default:
+                return Color.LIGHTGRAY;
+        }
+    }
+
+
 }

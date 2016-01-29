@@ -1,6 +1,5 @@
 package Model;
 
-import View.MoleculeMesh;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Shape3D;
 
@@ -37,9 +36,6 @@ public class Guanine extends AResidue {
         myStructure.addResidue(this);
     }
 
-    @Override
-    public void addToMoleculeMesh(MoleculeMesh myMoleculeMesh, Shape3D myShape3D) {
-        myMoleculeMesh.addGuanine(myShape3D);
-    }
+
 
 }
