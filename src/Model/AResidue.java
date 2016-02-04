@@ -9,6 +9,7 @@ import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -20,8 +21,22 @@ public abstract class AResidue {
     //contains all atoms of residue
     HashMap<String, Atom> myAtoms;
 
+    private int indexInArrayList;
+
 
     // START abstract
+
+    public abstract int checkForPairing(WatsonCrick myWatsonCrick);
+
+    /**
+     * sorts into the right given Arraylist according to type
+     * @param myAdenines
+     * @param myCytosines
+     * @param myGuanines
+     * @param myUracils
+     */
+    public abstract void sortIntoArrayList(ArrayList<Adenine> myAdenines, ArrayList<Cytosine> myCytosines, ArrayList<Guanine> myGuanines, ArrayList<Uracil> myUracils);
+
 
     /**
      * Generate the sugar TriangleMesh according to Residue Type
@@ -157,5 +172,31 @@ public abstract class AResidue {
         return myAtoms.values().iterator().next().getAtomResidue();
     }
 
+    public int getIndexInArrayList(){
+        return indexInArrayList;
+    }
 
+    public void setIndexInArrayList(int i){
+        indexInArrayList = i;
+    }
+
+    /**
+     * checks if the angles and lengths of the atoms are in range for pairing
+     * @param HBond1
+     * @param HBondMid
+     * @param NoHBond
+     * @return
+     */
+    public boolean checkForLenghAndAngles(Point3D HBond1, Point3D HBondMid, Point3D NoHBond){
+        double length = HBond1.distance(HBondMid);
+        System.out.println(length);
+        double angle = HBondMid.angle(HBond1, NoHBond);
+        System.out.println(angle);
+        //return (length >= myValues.HBOND_MIN_DISTANCE && length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE && angle <= myValues.HBOND_MAX_ANGLE);
+        return (length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE);
+    }
 }
+
+
+
+

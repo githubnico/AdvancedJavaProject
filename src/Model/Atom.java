@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.geometry.Point3D;
+
 /**
  * Created by Deviltech on 13.12.2015.
  */
@@ -38,6 +40,10 @@ public class Atom {
         this.atomType = s[14].replaceAll("\\s+","").charAt(0);
     }
 
+    // Generates the Point3D of this atom
+    public Point3D toPoint3D(){
+        return new Point3D(coordX, coordY, coordZ);
+    }
 
     public int getAtomID() {
         return atomID;
@@ -118,4 +124,5 @@ public class Atom {
     public void setAtomType(char atomType) {
         this.atomType = atomType;
     }
+
 }

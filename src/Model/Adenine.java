@@ -1,8 +1,10 @@
 package Model;
 
+import javafx.geometry.Point3D;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Shape3D;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,6 +16,35 @@ public class Adenine extends AResidue {
         this.myAtoms = new HashMap<>();
     }
 
+
+    @Override
+    public int checkForPairing(WatsonCrick myWatsonCrick) {
+        int myPairedIndex = -1;
+        for(Uracil currentUracil: myWatsonCrick.getMyUracils()) {
+            Point3D PointUracilO4 = currentUracil.getAtom("O4").toPoint3D();
+            Point3D PointUracilN3 = currentUracil.getAtom("N3").toPoint3D();
+            Point3D PointUracilH3 = currentUracil.getAtom("H3").toPoint3D();
+            Point3D PointAdenineN6 = this.getAtom("N6").toPoint3D();
+            Point3D PointAdenineH6 = this.getAtom("H61").toPoint3D();
+            Point3D PointAdenineN1 = this.getAtom("N1").toPoint3D();
+
+            boolean isPaired = checkForLenghAndAngles(PointUracilO4, PointAdenineH6, PointAdenineN6);
+            isPaired = isPaired && checkForLenghAndAngles(PointAdenineN1, PointUracilH3, PointUracilN3);
+            // if lengh and angles are in range, return pair index
+            System.out.println(isPaired);
+            if (isPaired) {
+                myPairedIndex = currentUracil.getIndexInArrayList();
+                return myPairedIndex;
+            }
+
+        }
+        return myPairedIndex;
+    }
+
+    @Override
+    public void sortIntoArrayList(ArrayList<Adenine> myAdenines, ArrayList<Cytosine> myCytosines, ArrayList<Guanine> myGuanines, ArrayList<Uracil> myUracils) {
+        myAdenines.add(this);
+    }
 
     @Override
     public MeshView generateSugarMesh() {

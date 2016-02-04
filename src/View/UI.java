@@ -149,6 +149,8 @@ public class UI extends Application{
                     File file = fileChooser.showOpenDialog(primaryStage);
                     if (file != null) {
                         try {
+                            myStructure = new Structure();
+                            draw3DRoot.getChildren().clear();
                             text3D.setText(file.getName());
                             ArrayList<Atom> myAtoms = new PDB_Reader().readInFile(file);
                             myStructure.generateResiduesbyAtoms(myAtoms);
@@ -168,6 +170,10 @@ public class UI extends Application{
 
         // Watson-Crick Pairing
         seqPairingItem.setOnAction((value)->{
+            int[] test = new WatsonCrick(myStructure.getMyResidues()).generatePairs();
+            for(int i: test){
+                System.out.print(i);
+            }
             final double[][][] coordsRepresentation = {new double[1][2]};
             Graph myGraph = new Graph();
             try {
