@@ -173,11 +173,10 @@ public class UI extends Application{
         seqPairingItem.setOnAction((value)->{
             final double[][][] coordsRepresentation = {new double[1][2]};
             Graph myGraph = new Graph();
-            System.out.println(new Nussinov(myStructure.getMySequence()).getBracketNotation());
-            System.out.println(new WatsonCrick(myStructure.getMyResidues()).getMyDotBracketNotation());
             try {
+                myStructure.generatePairedWatsonCrick();
                 //myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
-                myGraph.parseNotation(new WatsonCrick(myStructure.getMyResidues()).getMyDotBracketNotation());
+                myGraph.parseNotation(myStructure.getMyPaired());
             } catch (IOException e) {
 
             }
@@ -206,9 +205,12 @@ public class UI extends Application{
             colorAllShape3D(myStructure.filterShape3DByType("U"), myValues.MATERIAL_DARK_RED);
         });
 
-        // TODO right coloring (based on pairing)
         coloringPairedItem.setOnAction((value) ->{
-            dialogInProgress();
+            if(myStructure.getMyPaired() == null){
+                myStructure.generatePairedWatsonCrick();
+            }
+            colorAllShape3D(myStructure.filterShape3DByPaired(true), myValues.MATERIAL_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByPaired(false), myValues.MATERIAL_RED);
         });
 
         // Handle Checkmenuitem

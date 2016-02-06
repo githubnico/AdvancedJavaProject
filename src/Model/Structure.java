@@ -58,6 +58,9 @@ public class Structure {
         return my3DotherShapes;
     }
 
+    public String getMyPaired() {
+        return myPaired;
+    }
 
     /**
      * generate Residues by Atoms
@@ -118,12 +121,44 @@ public class Structure {
     public ArrayList<Shape3D> filterShape3DByType(String myType){
         ArrayList<Shape3D> filteredList = new ArrayList<Shape3D>();
         for (int i = 0; i < myResidues.size(); i++){
-            if(myType == myResidues.get(i).getResidueType()){
+            if(myType.equals(myResidues.get(i).getResidueType())){
                 filteredList.add(my3DResidueShapes.get(i));
             }
         }
         return filteredList;
     }
+
+    /**
+     * get Shapes3D based on boolean[] and keepTrue
+     * @param myBooleans
+     * @param keepTrue
+     * @return
+     */
+    public ArrayList<Shape3D> filterShape3DByBoolean(boolean[] myBooleans, boolean keepTrue){
+        int index = Math.min(myBooleans.length, myResidues.size());
+        ArrayList<Shape3D> filteredList = new ArrayList<Shape3D>();
+        for(int i = 0; i < index; i++){
+            // if keeptrue, add at true, else add at false
+            if(myBooleans[i] ^ !keepTrue){
+                filteredList.add(my3DResidueShapes.get(i));
+            }
+        }
+        return filteredList;
+    }
+
+    /**
+     * get Shapes3D that paired or that didn't pair based on keepPaired
+     * @param keepPaired
+     * @return
+     */
+    public ArrayList<Shape3D> filterShape3DByPaired(boolean keepPaired){
+        boolean[] myBooleans = new boolean[myPaired.length()];
+        for(int i = 0; i < myPaired.length(); i++){
+            myBooleans[i] = myPaired.charAt(i) =='(' || myPaired.charAt(i) == ')';
+        }
+        return filterShape3DByBoolean(myBooleans, keepPaired);
+    }
+
 
     /**
      generates a String Sequence based on myResidues
@@ -146,7 +181,7 @@ public class Structure {
      * generate pairing based on Watson Crick
      */
     public void generatePairedWatsonCrick(){
-        // TODO Implement
+        myPaired = new WatsonCrick(myResidues).getMyDotBracketNotation();
     }
 
 
