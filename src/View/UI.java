@@ -151,6 +151,7 @@ public class UI extends Application{
                         try {
                             myStructure = new Structure();
                             draw3DRoot.getChildren().clear();
+                            drawPane.getChildren().clear();
                             text3D.setText(file.getName());
                             ArrayList<Atom> myAtoms = new PDB_Reader().readInFile(file);
                             myStructure.generateResiduesbyAtoms(myAtoms);
@@ -170,12 +171,10 @@ public class UI extends Application{
 
         // Watson-Crick Pairing
         seqPairingItem.setOnAction((value)->{
-            int[] test = new WatsonCrick(myStructure.getMyResidues()).getMyPairs();
-            for(int i: test){
-                System.out.print(i);
-            }
             final double[][][] coordsRepresentation = {new double[1][2]};
             Graph myGraph = new Graph();
+            System.out.println(new Nussinov(myStructure.getMySequence()).getBracketNotation());
+            System.out.println(new WatsonCrick(myStructure.getMyResidues()).getMyDotBracketNotation());
             try {
                 //myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
                 myGraph.parseNotation(new WatsonCrick(myStructure.getMyResidues()).getMyDotBracketNotation());
@@ -540,7 +539,7 @@ public class UI extends Application{
         }
 
         // generate edges
-        for (int i = startIndex - 1; i < edges.length; i++) {
+        for (int i = Math.max(startIndex - 1, 0); i < edges.length; i++) {
             Line line = new Line();
             line.setStroke(Color.ORANGE);
             Circle circle1 = circleList.get(edges[i][0]);

@@ -26,7 +26,6 @@ public class Guanine extends AResidue {
             Point3D PointGuanineH1 = this.getAtom("H1").toPoint3D();
             Point3D PointGuanineN2 = this.getAtom("N2").toPoint3D();
             Point3D PointGuanineH2 = this.getAtom("H21").toPoint3D();
-            System.out.println(currentCytosine.getIndexInArrayList());
             Point3D PointCytosineN4 = currentCytosine.getAtom("N4").toPoint3D();
             Point3D PointCytosineH4 = currentCytosine.getAtom("H41").toPoint3D();
             Point3D PointCytosineN3 = currentCytosine.getAtom("N3").toPoint3D();
@@ -39,7 +38,6 @@ public class Guanine extends AResidue {
             isPaired = isPaired && checkForLenghAndAngles(PointCytosineO2, PointGuanineH2, PointGuanineN2);
 
             // if lengh and angles are in range, return pair index
-            System.out.println(isPaired);
             if (isPaired) {
                 myPairedIndex = currentCytosine.getIndexInArrayList();
                 return myPairedIndex;

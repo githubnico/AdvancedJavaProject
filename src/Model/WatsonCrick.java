@@ -56,17 +56,19 @@ public class WatsonCrick {
             AResidue currentResidue = myResidues.get(i);
             int myPairedIndex = currentResidue.checkForPairing(this);
             // if myPairedIndex is -1, then no Pair, otherwise returns index of pair
-            if (myPairedIndex >= 0){
+            if (myPairedIndex >= 0) {
                 // Set Pairs
                 myPairs[i] = myPairedIndex;
                 myPairs[myPairedIndex] = i;
-                // Set Dot Bracket notation
-                if(myPairs.length > myPairedIndex){
-                    myDotBracketNotation[myPairedIndex] = '(';
-                    myDotBracketNotation[i] = ')';
-                } else {
-                    myDotBracketNotation[i] = '(';
-                    myDotBracketNotation[myPairedIndex] = ')';
+                // Set Dot Bracket notation, if both Residues are empty
+                if (Character.toString(myDotBracketNotation[myPairedIndex]).equals(".") && Character.toString(myDotBracketNotation[i]).equals(".")) {
+                    if (myPairs.length > myPairedIndex) {
+                        myDotBracketNotation[myPairedIndex] = ')';
+                        myDotBracketNotation[i] = '(';
+                    } else {
+                        myDotBracketNotation[i] = ')';
+                        myDotBracketNotation[myPairedIndex] = '(';
+                    }
                 }
             }
         }

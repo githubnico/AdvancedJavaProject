@@ -31,7 +31,6 @@ public class Adenine extends AResidue {
             boolean isPaired = checkForLenghAndAngles(PointUracilO4, PointAdenineH6, PointAdenineN6);
             isPaired = isPaired && checkForLenghAndAngles(PointAdenineN1, PointUracilH3, PointUracilN3);
             // if lengh and angles are in range, return pair index
-            System.out.println(isPaired);
             if (isPaired) {
                 myPairedIndex = currentUracil.getIndexInArrayList();
                 return myPairedIndex;

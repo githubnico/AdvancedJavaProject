@@ -119,7 +119,6 @@ public abstract class AResidue {
 
         for (String currentName : atomNames) {
             Atom currentAtom = myAtoms.get(currentName);
-            System.out.println(myAtoms.get(currentName).getAtomID());
             float points[] = {currentAtom.getCoordX(), currentAtom.getCoordY(), currentAtom.getCoordZ()};
             mesh.getPoints().addAll(points);
         }
@@ -190,10 +189,11 @@ public abstract class AResidue {
      */
     public boolean checkForLenghAndAngles(Point3D HBond1, Point3D HBondMid, Point3D NoHBond){
         double length = HBond1.distance(HBondMid);
-        System.out.println(length);
         double angle = HBondMid.angle(HBond1, NoHBond);
-        System.out.println(angle);
-        //return (length >= myValues.HBOND_MIN_DISTANCE && length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE && angle <= myValues.HBOND_MAX_ANGLE);
+        //System.out.println("");
+        //System.out.println(length);
+        //System.out.println(angle);
+        //System.out.println(length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE);
         return (length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE);
     }
 }

@@ -38,7 +38,6 @@ public class Cytosine extends AResidue {
             isPaired = isPaired && checkForLenghAndAngles(PointCytosineO2, PointGuanineH2, PointGuanineN2);
 
             // if lengh and angles are in range, return pair index
-            System.out.println(isPaired);
             if (isPaired) {
                 myPairedIndex = currentGuanine.getIndexInArrayList();
                 return myPairedIndex;
