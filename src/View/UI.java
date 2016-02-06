@@ -170,14 +170,15 @@ public class UI extends Application{
 
         // Watson-Crick Pairing
         seqPairingItem.setOnAction((value)->{
-            int[] test = new WatsonCrick(myStructure.getMyResidues()).generatePairs();
+            int[] test = new WatsonCrick(myStructure.getMyResidues()).getMyPairs();
             for(int i: test){
                 System.out.print(i);
             }
             final double[][][] coordsRepresentation = {new double[1][2]};
             Graph myGraph = new Graph();
             try {
-                myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
+                //myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
+                myGraph.parseNotation(new WatsonCrick(myStructure.getMyResidues()).getMyDotBracketNotation());
             } catch (IOException e) {
 
             }
@@ -193,17 +194,17 @@ public class UI extends Application{
 
         // Set color Handlers
         coloringAGCUItem.setOnAction((value) ->{
-            colorAllShape3D(myStructure.filterShape3DByType('A'), myValues.MATERIAL_BLUE);
-            colorAllShape3D(myStructure.filterShape3DByType('G'), myValues.MATERIAL_GREEN);
-            colorAllShape3D(myStructure.filterShape3DByType('C'), myValues.MATERIAL_RED);
-            colorAllShape3D(myStructure.filterShape3DByType('U'), myValues.MATERIAL_YELLOW);
+            colorAllShape3D(myStructure.filterShape3DByType("A"), myValues.MATERIAL_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByType("G"), myValues.MATERIAL_GREEN);
+            colorAllShape3D(myStructure.filterShape3DByType("C"), myValues.MATERIAL_RED);
+            colorAllShape3D(myStructure.filterShape3DByType("U"), myValues.MATERIAL_YELLOW);
         });
 
         coloringPurinePyrimidineItem.setOnAction((value) ->{
-            colorAllShape3D(myStructure.filterShape3DByType('A'), myValues.MATERIAL_BLUE);
-            colorAllShape3D(myStructure.filterShape3DByType('G'), myValues.MATERIAL_DARK_BLUE);
-            colorAllShape3D(myStructure.filterShape3DByType('C'), myValues.MATERIAL_RED);
-            colorAllShape3D(myStructure.filterShape3DByType('U'), myValues.MATERIAL_DARK_RED);
+            colorAllShape3D(myStructure.filterShape3DByType("A"), myValues.MATERIAL_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByType("G"), myValues.MATERIAL_DARK_BLUE);
+            colorAllShape3D(myStructure.filterShape3DByType("C"), myValues.MATERIAL_RED);
+            colorAllShape3D(myStructure.filterShape3DByType("U"), myValues.MATERIAL_DARK_RED);
         });
 
         // TODO right coloring (based on pairing)

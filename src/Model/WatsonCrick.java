@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Deviltech on 04.02.2016.
@@ -15,6 +16,9 @@ public class WatsonCrick {
     private ArrayList<Guanine> myGuanines;
     private ArrayList<Uracil> myUracils;
 
+    private int[] myPairs;
+    private char[]  myDotBracketNotation;
+
     /**
      * Constructor
      * @param myResidues
@@ -25,13 +29,17 @@ public class WatsonCrick {
         this.myCytosines = new ArrayList<Cytosine>();
         this.myGuanines = new ArrayList<Guanine>();
         this.myUracils = new ArrayList<Uracil>();
+        myPairs = new int[myResidues.size()];
+        // Fill array with "."
+        myDotBracketNotation = new char[myResidues.size()];
+        Arrays.fill(myDotBracketNotation, '.');
     }
 
     /**
      * Generates Watson-Crick Pairs
      * @return
      */
-    public int[] generatePairs(){
+    private void generatePairs(){
         int[] myPairs = new int[myResidues.size()];
 
         // Sort by base to lower runtime
@@ -52,9 +60,33 @@ public class WatsonCrick {
                 // Set Pairs
                 myPairs[i] = myPairedIndex;
                 myPairs[myPairedIndex] = i;
+                // Set Dot Bracket notation
+                if(myPairs.length > myPairedIndex){
+                    myDotBracketNotation[myPairedIndex] = '(';
+                    myDotBracketNotation[i] = ')';
+                } else {
+                    myDotBracketNotation[i] = '(';
+                    myDotBracketNotation[myPairedIndex] = ')';
+                }
             }
         }
+    }
 
+    /**
+     * generates the dot bracket nonation
+     * @return
+     */
+    public String getMyDotBracketNotation(){
+        generatePairs();
+        return new String(myDotBracketNotation);
+    }
+
+    /**
+     * generates the pair notaion
+     * @return
+     */
+    public int[] getMyPairs(){
+        generatePairs();
         return myPairs;
     }
 

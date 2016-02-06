@@ -119,6 +119,7 @@ public abstract class AResidue {
 
         for (String currentName : atomNames) {
             Atom currentAtom = myAtoms.get(currentName);
+            System.out.println(myAtoms.get(currentName).getAtomID());
             float points[] = {currentAtom.getCoordX(), currentAtom.getCoordY(), currentAtom.getCoordZ()};
             mesh.getPoints().addAll(points);
         }
@@ -168,7 +169,7 @@ public abstract class AResidue {
      * Returns the Residue Type of the Residue
      * @return
      */
-    public char getResidueType(){
+    public String getResidueType(){
         return myAtoms.values().iterator().next().getAtomResidue();
     }
 

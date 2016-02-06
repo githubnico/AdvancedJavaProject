@@ -9,7 +9,7 @@ public class Atom {
 
     private int atomID;
     private String atomName;
-    private char atomResiduum;
+    private String atomResiduum;
     private char atomChain;
     private int atomResidueIndex;
     private float coordX;
@@ -29,7 +29,7 @@ public class Atom {
     public Atom(String[] s) {
         this.atomID = Integer.parseInt(s[1].replaceAll("\\s+",""));
         this.atomName = s[2].replaceAll("\\s+","");
-        this.atomResiduum = s[4].replaceAll("\\s+","").charAt(0);
+        this.atomResiduum = s[4].replaceAll("\\s+","");
         this.atomChain = s[5].replaceAll("\\s+","").charAt(0);
         this.atomResidueIndex = Integer.parseInt(s[6].replaceAll("\\s+",""));
         this.coordX = Float.parseFloat(s[8]);
@@ -61,11 +61,11 @@ public class Atom {
         this.atomName = atomName;
     }
 
-    public char getAtomResidue() {
+    public String  getAtomResidue() {
         return atomResiduum;
     }
 
-    public void setAtomResidue(char atomResiduum) {
+    public void setAtomResidue(String atomResiduum) {
         this.atomResiduum = atomResiduum;
     }
 

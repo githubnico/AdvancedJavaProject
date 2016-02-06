@@ -77,8 +77,11 @@ public class Structure {
             }
 
             // save completed residue
-            //currentResidue.addToStructure(myStructure);
-            addResidue(currentResidue);
+            if(isCorrectResidue(myAtoms.get(i-1))){
+                //currentResidue.addToStructure(myStructure);
+                addResidue(currentResidue);
+            }
+
 
             if (i < myAtoms.size()) {
                 // generate new Residue based on the Residue type
@@ -97,7 +100,7 @@ public class Structure {
      * @return
      */
     public ArrayList<AResidue> filterResiduesByType(AResidue myResidue){
-        char myType = myResidue.getResidueType();
+        String myType = myResidue.getResidueType();
         ArrayList<AResidue> filteredList = new ArrayList<AResidue>();
         for (AResidue currentResidue: myResidues){
             if(myType == currentResidue.getResidueType()){
@@ -112,7 +115,7 @@ public class Structure {
      * @param myType
      * @return
      */
-    public ArrayList<Shape3D> filterShape3DByType(char myType){
+    public ArrayList<Shape3D> filterShape3DByType(String myType){
         ArrayList<Shape3D> filteredList = new ArrayList<Shape3D>();
         for (int i = 0; i < myResidues.size(); i++){
             if(myType == myResidues.get(i).getResidueType()){
@@ -160,18 +163,28 @@ public class Structure {
      */
     private AResidue constructResidueWithType(Atom a) {
 
-        switch (Character.toLowerCase(a.getAtomResidue())) {
-            case 'a':
+        switch ((a.getAtomResidue().toUpperCase().charAt(0))) {
+            case 'A':
                 return new Adenine();
-            case 'u':
+            case 'U':
                 return new Uracil();
-            case 'g':
+            case 'G':
                 return new Guanine();
-            case 'c':
+            case 'C':
                 return new Cytosine();
             default:
                 return null;
         }
+    }
+
+    /**
+     * checks for correct Residue Type
+     * @param currentAtom
+     * @return
+     */
+    private boolean isCorrectResidue(Atom currentAtom){
+        String name = currentAtom.getAtomResidue();
+        return (name.equals("A") || name.equals("U") || name.equals("G") || name.equals("C"));
     }
 
 
