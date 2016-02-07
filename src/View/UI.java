@@ -262,6 +262,7 @@ public class UI extends Application{
 
 
         vBox.getChildren().addAll(menuBar, accordion);
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("3D Viewer");
 
@@ -363,8 +364,8 @@ public class UI extends Application{
             myGroup.getChildren().addAll(currentBaseView, currentSugarView, baseSugarLine);
 
         }
+        centerGroup(myGroup);
 
-        centerGroup(draw3DRoot);
 
     }
 
@@ -377,25 +378,28 @@ public class UI extends Application{
      */
     private void centerGroup(Group g) {
         ObservableList<Node> nodes = g.getChildren();
-        double meanX = 0;
-        double meanY = 0;
-        double meanZ = 0;
+        double meanX = 0.0;
+        double meanY = 0.0;
+        double meanZ = 0.0;
 
         for (Node currentNode : nodes) {
             meanX += currentNode.getTranslateX();
             meanY += currentNode.getTranslateY();
             meanZ += currentNode.getTranslateZ();
         }
-        meanX = meanX / nodes.size();
-        meanY = meanY / nodes.size();
-        meanZ = meanZ / nodes.size();
+        double nodeSize = nodes.size()/myValues.NODE_VALUE;
+
+        meanX = meanX / nodeSize;
+        meanY = meanY / nodeSize;
+        meanZ = meanZ / nodeSize;
 
 
-        for (Node currentNode : g.getChildren()) {
+        for (Node currentNode : nodes) {
             currentNode.setTranslateX(currentNode.getTranslateX() - meanX);
             currentNode.setTranslateY(currentNode.getTranslateY() - meanY);
             currentNode.setTranslateZ(currentNode.getTranslateZ() - meanZ);
         }
+
     }
 
     /**
@@ -455,7 +459,7 @@ public class UI extends Application{
                     } else {
                         // follow mouse
                         draw3DRoot.getTransforms().add(new Rotate(offsetX, 0, 0, 0, Rotate.Y_AXIS));
-                        draw3DRoot.getTransforms().add(new Rotate(offsetY, 0, 0, 0, Rotate.Z_AXIS));
+                        draw3DRoot.getTransforms().add(new Rotate( - offsetY, 0, 0, 0, Rotate.Z_AXIS));
                     }
 
                     originX += offsetX;
