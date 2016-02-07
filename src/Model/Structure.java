@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.Shape3D;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ public class Structure {
 
     private String myPaired;
 
+    private ArrayList<Circle> myCircles;
+
     private ArrayList<Shape3D> my3DResidueShapes;
 
     private ArrayList<Shape3D> my3DotherShapes;
@@ -23,6 +27,7 @@ public class Structure {
     // Constructor
     public Structure() {
         this.myResidues = new ArrayList<AResidue>();
+        this.myCircles = new ArrayList<Circle>();
         this.my3DResidueShapes = new ArrayList<Shape3D>();
         this.my3DotherShapes = new ArrayList<Shape3D>();
     }
@@ -60,6 +65,14 @@ public class Structure {
 
     public String getMyPaired() {
         return myPaired;
+    }
+
+    public ArrayList<Circle> getMyCircles() {
+        return myCircles;
+    }
+
+    public void setMyCircles(ArrayList<Circle> myCircles) {
+        this.myCircles = myCircles;
     }
 
     /**

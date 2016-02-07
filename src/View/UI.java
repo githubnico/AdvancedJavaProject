@@ -38,14 +38,14 @@ public class UI extends Application{
 
     TextArea sequenceArea;
 
+    IndexRange myIndexRange;
+
     //Contains all Residues to be drawn
     Structure myStructure;
 
     // for rotation
     double originX;
     double originY;
-
-
 
     PerspectiveCamera camera3D;
 
@@ -77,6 +77,8 @@ public class UI extends Application{
         MenuItem struct3DResetItem = new MenuItem(myValues.MENU_RESET_VIEW);
         Menu struct3DColoringItem = new Menu(myValues.MENU_COLORING);
 
+        MenuItem DummyItem = new MenuItem("Dummy");
+
         // Submenuitems
         MenuItem coloringAGCUItem = new MenuItem(myValues.MENU_AGCU);
         MenuItem coloringPurinePyrimidineItem = new MenuItem(myValues.MENU_PURINE_PYRIMIDINE);
@@ -86,7 +88,7 @@ public class UI extends Application{
         CheckMenuItem greenPhosphorus = new CheckMenuItem(myValues.MENU_GREEN_PHOSPHORUS);
 
 
-        menuFile.getItems().addAll(fileOpenItem);
+        menuFile.getItems().addAll(fileOpenItem, DummyItem);
         menuSequence.getItems().addAll(seqPairingItem);
         menu2DStructure.getItems().addAll(struct2DResetItem);
         menu3DStructure.getItems().addAll(struct3DResetItem, struct3DColoringItem);
@@ -95,11 +97,18 @@ public class UI extends Application{
         struct3DColoringItem.getItems().addAll(greenPhosphorus, new SeparatorMenuItem(), coloringAGCUItem, coloringPurinePyrimidineItem, coloringPairedItem);
 
 
+        // TODO DUMMY
+        DummyItem.setOnAction((value)->{
+
+        });
+
         // Sequence Pane
         sequenceArea = new TextArea();
         sequenceArea.setWrapText(true);
-        sequenceArea.setStyle("-fx-font-family: monospace");
+        sequenceArea.setStyle("-fx-font-family: monospace; -fx-font-size: 20;");
         sequenceArea.setEditable(false);
+
+        myIndexRange = new IndexRange(0,0);
 
         // 2D Pane
         Pane drawPane = new Pane();
@@ -126,16 +135,8 @@ public class UI extends Application{
         structure2DPane.setExpanded(false);
         structure3DPane.setExpanded(false);
 
-
-        //drawSubScene.heightProperty().bind(structure3DPane.heightProperty());
-        //drawSubScene.widthProperty().bind(structure3DPane.widthProperty());
-
-
-
         drawSubScene.heightProperty().bind(scene.heightProperty());
         drawSubScene.widthProperty().bind(scene.widthProperty());
-
-
 
 
         final VBox accordion = new VBox();
@@ -144,9 +145,10 @@ public class UI extends Application{
 
         // Sequence area selection
         sequenceArea.setOnMouseClicked((value) -> {
-            System.out.println(sequenceArea.getSelection()
-            );
-
+            myIndexRange = sequenceArea.getSelection();
+            colorSelectedCircles();
+            System.out.println(sequenceArea.getSelection());
+            System.out.println(myStructure.getMyCircles().size());
         });
 
         // Set open Menu handler
@@ -196,9 +198,10 @@ public class UI extends Application{
             } catch (IOException e) {
 
             }
-            coordsRepresentation[0] = SpringEmbedder.computeSpringEmbedding(myValues.NUSSINOV_ITERATIONS, myGraph.getNumberOfNodes(), myGraph.getEdges(), null);
+            coordsRepresentation[0] = SpringEmbedder.computeSpringEmbedding(myValues.PAIRING_ITERATIONS, myGraph.getNumberOfNodes(), myGraph.getEdges(), null);
             SpringEmbedder.centerCoordinates(coordsRepresentation[0], 50, 550, 50, 550);
             drawShapes(drawPane, coordsRepresentation[0], myGraph.getEdges(), myGraph.getNumberOfNodes());
+            colorSelectedCircles();
         });
 
         // Reset View Menuitem
@@ -531,6 +534,9 @@ public class UI extends Application{
             if (myStructure.getMySequence().length() > i) {
                 toolTipText += ": " + myStructure.getMySequence().charAt(i);
                 currentCircle.setFill(getNodeColor(myStructure.getMySequence().charAt(i)));
+                currentCircle.setStroke(Color.BLACK);
+                currentCircle.setStrokeWidth(2);
+
             }
             Tooltip.install(
                     currentCircle,
@@ -575,10 +581,27 @@ public class UI extends Application{
             lineList.add(line);
         }
 
+        myStructure.setMyCircles(circleList);
 
         drawPane.getChildren().addAll(lineList);
         drawPane.getChildren().addAll(circleList);
 
+    }
+
+    /**
+     * color circles based on selection
+     */
+    private void colorSelectedCircles(){
+
+        // color all circles unselected
+        for(Circle currentCircle: myStructure.getMyCircles()){
+            currentCircle.setStroke(Color.BLACK);
+        }
+
+        // draw the selected in selected stroke color
+        for(int i = myIndexRange.getStart(); i<= Math.min(myIndexRange.getEnd(), myStructure.getMyCircles().size()-1); i++){
+            myStructure.getMyCircles().get(i).setStroke(Color.ORANGERED);
+        }
 
     }
 
