@@ -99,6 +99,7 @@ public class UI extends Application{
         sequenceArea = new TextArea();
         sequenceArea.setWrapText(true);
         sequenceArea.setStyle("-fx-font-family: monospace");
+        sequenceArea.setEditable(false);
 
         // 2D Pane
         Pane drawPane = new Pane();
@@ -125,13 +126,28 @@ public class UI extends Application{
         structure2DPane.setExpanded(false);
         structure3DPane.setExpanded(false);
 
+
         //drawSubScene.heightProperty().bind(structure3DPane.heightProperty());
         //drawSubScene.widthProperty().bind(structure3DPane.widthProperty());
+
+
+
+        drawSubScene.heightProperty().bind(scene.heightProperty());
+        drawSubScene.widthProperty().bind(scene.widthProperty());
+
+
+
 
         final VBox accordion = new VBox();
         accordion.getChildren().setAll(sequencePane, structure2DPane, structure3DPane
         );
 
+        // Sequence area selection
+        sequenceArea.setOnMouseClicked((value) -> {
+            System.out.println(sequenceArea.getSelection()
+            );
+
+        });
 
         // Set open Menu handler
         fileOpenItem.setOnAction((value) -> {
@@ -257,7 +273,7 @@ public class UI extends Application{
 
         drawSubScene.setCamera(camera3D);
 
-        stackPane.setAlignment(text3D, Pos.BOTTOM_LEFT);
+        stackPane.setAlignment(text3D, Pos.TOP_LEFT);
         stackPane.setMargin(text3D, new Insets(30));
 
 

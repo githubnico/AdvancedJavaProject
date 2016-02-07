@@ -69,6 +69,8 @@ public class myValues {
 
     public static final  double NODESIZE = 10;
 
+    public static final double NODE_VALUE = 7;
+
     public static final double LINE_WIDTH_SMALL = 0.06;
 
     public static final double LINE_WIDTH_MEDIUM = 0.35;
