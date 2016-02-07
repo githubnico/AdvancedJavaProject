@@ -1,12 +1,14 @@
 package View;
 
 import Model.*;
+import javafx.animation.RotateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -22,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,6 +52,8 @@ public class UI extends Application{
 
     PerspectiveCamera camera3D;
 
+    RotateTransition myAnimation;
+
     // indicates if shift key is pressed
     private boolean isShiftPressed;
 
@@ -75,9 +80,9 @@ public class UI extends Application{
         MenuItem seqPairingItem = new MenuItem(myValues.MENU_PAIRING);
         MenuItem struct2DResetItem = new MenuItem(myValues.MENU_RESET_VIEW);
         MenuItem struct3DResetItem = new MenuItem(myValues.MENU_RESET_VIEW);
+        MenuItem struct3DAnimateItem = new MenuItem(myValues.MENU_ANIMATION);
         Menu struct3DColoringItem = new Menu(myValues.MENU_COLORING);
 
-        MenuItem DummyItem = new MenuItem("Dummy");
 
         // Submenuitems
         MenuItem coloringAGCUItem = new MenuItem(myValues.MENU_AGCU);
@@ -88,19 +93,14 @@ public class UI extends Application{
         CheckMenuItem greenPhosphorus = new CheckMenuItem(myValues.MENU_GREEN_PHOSPHORUS);
 
 
-        menuFile.getItems().addAll(fileOpenItem, DummyItem);
+        menuFile.getItems().addAll(fileOpenItem);
         menuSequence.getItems().addAll(seqPairingItem);
         menu2DStructure.getItems().addAll(struct2DResetItem);
-        menu3DStructure.getItems().addAll(struct3DResetItem, struct3DColoringItem);
+        menu3DStructure.getItems().addAll(struct3DResetItem, struct3DColoringItem, struct3DAnimateItem);
         menuBar.getMenus().addAll(menuFile, menuSequence, menu2DStructure, menu3DStructure);
 
         struct3DColoringItem.getItems().addAll(greenPhosphorus, new SeparatorMenuItem(), coloringAGCUItem, coloringPurinePyrimidineItem, coloringPairedItem);
 
-
-        // TODO DUMMY
-        DummyItem.setOnAction((value)->{
-
-        });
 
         // Sequence Pane
         sequenceArea = new TextArea();
@@ -124,6 +124,9 @@ public class UI extends Application{
         myStructure = new Structure();
 
         isGreenPhosphorus = true;
+
+        // for 3D structure Rotation animation
+        myAnimation = generateAnimation(Rotate.X_AXIS);
 
 
         // Panes and accordion
@@ -175,6 +178,7 @@ public class UI extends Application{
                             myStructure.generateResiduesbyAtoms(myAtoms);
                             myStructure.generateSequence();
                             sequenceArea.setText(myStructure.getMySequence());
+                            generateAndDrawWCPairing(drawPane);
                             setAtomCoordinates(myAtoms, draw3DRoot);
                             text3D.setText(file.getName());
                             // open accordion
@@ -189,24 +193,16 @@ public class UI extends Application{
 
         // Watson-Crick Pairing
         seqPairingItem.setOnAction((value)->{
-            final double[][][] coordsRepresentation = {new double[1][2]};
-            Graph myGraph = new Graph();
-            try {
-                myStructure.generatePairedWatsonCrick();
-                //myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
-                myGraph.parseNotation(myStructure.getMyPaired());
-            } catch (IOException e) {
 
-            }
-            coordsRepresentation[0] = SpringEmbedder.computeSpringEmbedding(myValues.PAIRING_ITERATIONS, myGraph.getNumberOfNodes(), myGraph.getEdges(), null);
-            SpringEmbedder.centerCoordinates(coordsRepresentation[0], 50, 550, 50, 550);
-            drawShapes(drawPane, coordsRepresentation[0], myGraph.getEdges(), myGraph.getNumberOfNodes());
-            colorSelectedCircles();
         });
 
         // Reset View Menuitem
         struct3DResetItem.setOnAction((value)->{
             resetCamera3D(camera3D);
+        });
+
+        struct3DAnimateItem.setOnAction((value)->{
+            myAnimation.playFromStart();
         });
 
         // Set color Handlers
@@ -388,6 +384,26 @@ public class UI extends Application{
 
     }
 
+    /**
+     * generates the 2D structure and draws it
+     * @param drawPane
+     */
+    private void generateAndDrawWCPairing(Pane drawPane){
+        final double[][][] coordsRepresentation = {new double[1][2]};
+        Graph myGraph = new Graph();
+        try {
+            myStructure.generatePairedWatsonCrick();
+            //myGraph.parseNotation(new Nussinov(myStructure.getMySequence()).getBracketNotation());
+            myGraph.parseNotation(myStructure.getMyPaired());
+        } catch (IOException e) {
+
+        }
+        coordsRepresentation[0] = SpringEmbedder.computeSpringEmbedding(myValues.PAIRING_ITERATIONS, myGraph.getNumberOfNodes(), myGraph.getEdges(), null);
+        SpringEmbedder.centerCoordinates(coordsRepresentation[0], 50, 550, 50, 550);
+        drawShapes(drawPane, coordsRepresentation[0], myGraph.getEdges(), myGraph.getNumberOfNodes());
+        colorSelectedCircles();
+    }
+
 
 
     /**
@@ -457,6 +473,9 @@ public class UI extends Application{
                     // set origin coordinates
                     originX = t.getSceneX();
                     originY = t.getSceneY();
+
+                    // Stop rotate animation, when user intervention
+                    myAnimation.stop();
                 }
 
             };
@@ -483,6 +502,9 @@ public class UI extends Application{
 
                     originX += offsetX;
                     originY += offsetY;
+
+                    // Stop rotate animation, when user intervention
+                    myAnimation.stop();
 
                 }
 
@@ -624,6 +646,16 @@ public class UI extends Application{
             default:
                 return Color.LIGHTGRAY;
         }
+    }
+
+
+    private RotateTransition generateAnimation(Point3D myAxis){
+        RotateTransition myAnimation = new RotateTransition(Duration.seconds(3), draw3DRoot);
+        myAnimation.setByAngle(360);
+        myAnimation.setCycleCount(1);
+        myAnimation.setDelay(Duration.ZERO);
+        myAnimation.setAxis(myAxis);
+        return  myAnimation;
     }
 
 
