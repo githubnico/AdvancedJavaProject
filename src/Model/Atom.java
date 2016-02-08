@@ -35,7 +35,6 @@ public class Atom {
         this.coordX = Float.parseFloat(s[8]);
         this.coordY = Float.parseFloat(s[9]);
         this.coordZ = Float.parseFloat(s[10]);
-        // no marker field (index 9)
         this.atomBeta = Double.parseDouble(s[12]);
         this.atomType = s[14].replaceAll("\\s+","").charAt(0);
     }

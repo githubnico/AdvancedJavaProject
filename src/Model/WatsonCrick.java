@@ -45,6 +45,7 @@ public class WatsonCrick {
         // Sort by base to lower runtime
         for(int i = 0; i < myResidues.size(); i++){
             AResidue currentResidue = myResidues.get(i);
+
             // Set index in general ArrayList to find it later
             currentResidue.setIndexInArrayList(i);
 
@@ -55,12 +56,15 @@ public class WatsonCrick {
         for(int i = 0; i < myResidues.size(); i++){
             AResidue currentResidue = myResidues.get(i);
             int myPairedIndex = currentResidue.checkForPairing(this);
+
             // if myPairedIndex is -1, then no Pair, otherwise returns index of pair
             if (myPairedIndex >= 0) {
+
                 // Set Pairs
                 myPairs[i] = myPairedIndex;
                 myPairs[myPairedIndex] = i;
-                // Set Dot Bracket notation, if both Residues are empty
+
+                // Set Dot Bracket notation, if both Residues are not paired yet
                 if (Character.toString(myDotBracketNotation[myPairedIndex]).equals(".") && Character.toString(myDotBracketNotation[i]).equals(".")) {
                     if (myPairs.length > myPairedIndex) {
                         myDotBracketNotation[myPairedIndex] = ')';

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class PDB_Reader {
 
 
-
     public ArrayList<Atom> readInFile(File filePath) throws FileNotFoundException {
 
         // Checks if file exists

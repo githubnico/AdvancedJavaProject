@@ -1,7 +1,6 @@
 package Model;
 
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.Shape3D;
 
 import java.util.ArrayList;
@@ -151,7 +150,7 @@ public class Structure {
         int index = Math.min(myBooleans.length, myResidues.size());
         ArrayList<Shape3D> filteredList = new ArrayList<Shape3D>();
         for(int i = 0; i < index; i++){
-            // if keeptrue, add at true, else add at false
+            // if keepTrue, add shape3D at true, else add at false
             if(myBooleans[i] ^ !keepTrue){
                 filteredList.add(my3DResidueShapes.get(i));
             }
@@ -183,12 +182,7 @@ public class Structure {
         }
     }
 
-    /**
-     * outdated pairing generation
-     */
-    public void generatePairedNussinov(){
-        myPaired = new Nussinov(mySequence).getBracketNotation();
-    }
+
 
     /**
      * generate pairing based on Watson Crick
@@ -198,10 +192,6 @@ public class Structure {
     }
 
 
-
-    public void generateMoleculeMesh(){
-
-    }
 
     /**
      * generate Residue according to char

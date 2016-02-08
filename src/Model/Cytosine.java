@@ -32,7 +32,7 @@ public class Cytosine extends AResidue {
             Point3D PointCytosineO2 = this.getAtom("O2").toPoint3D();
 
 
-
+            // check for correct lengths and angles for 3 H bonds
             boolean isPaired = checkForLenghAndAngles(PointGuanineO6, PointCytosineH4, PointCytosineN4);
             isPaired = isPaired && checkForLenghAndAngles(PointCytosineN3, PointGuanineH1, PointGuanineN1);
             isPaired = isPaired && checkForLenghAndAngles(PointCytosineO2, PointGuanineH2, PointGuanineN2);

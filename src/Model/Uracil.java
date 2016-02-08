@@ -27,8 +27,10 @@ public class Uracil extends AResidue {
             Point3D PointAdenineH6 = currentAdenine.getAtom("H61").toPoint3D();
             Point3D PointAdenineN1 = currentAdenine.getAtom("N1").toPoint3D();
 
+            // check for correct lengths and angles for 2 H bonds
             boolean isPaired = checkForLenghAndAngles(PointUracilO4, PointAdenineH6, PointAdenineN6);
             isPaired = isPaired && checkForLenghAndAngles(PointAdenineN1, PointUracilH3, PointUracilN3);
+
             // if lengh and angles are in range, return pair index
             if(isPaired){
                 myPairedIndex = currentAdenine.getIndexInArrayList();

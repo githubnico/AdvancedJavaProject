@@ -117,6 +117,7 @@ public abstract class AResidue {
     public MeshView generateGeneralMesh(String[] atomNames, int faces[]) {
         TriangleMesh mesh = new TriangleMesh();
 
+        // Add points for every atom to mesh
         for (String currentName : atomNames) {
             Atom currentAtom = myAtoms.get(currentName);
             float points[] = {currentAtom.getCoordX(), currentAtom.getCoordY(), currentAtom.getCoordZ()};
@@ -127,6 +128,7 @@ public abstract class AResidue {
 
         MeshView myMeshView = new MeshView(mesh);
 
+        // generate Tooltip
         Atom firstAtom = myAtoms.get(atomNames[0]);
         Tooltip myToolTip = new Tooltip(firstAtom.getAtomResidue()+Integer.toString(firstAtom.getAtomResidueIndex()));
         Tooltip.install(myMeshView, myToolTip);
@@ -146,7 +148,7 @@ public abstract class AResidue {
     public Shape3D generateLine(Atom firstAtom, Atom secondAtom, double width) {
         Point3D origin = new Point3D(firstAtom.getCoordX(), firstAtom.getCoordY(), firstAtom.getCoordZ());
         Point3D target = new Point3D(secondAtom.getCoordX(), secondAtom.getCoordY(), secondAtom.getCoordZ());
-        Point3D yAxis = new Point3D(0, 1, 0);
+        Point3D yAxis = Rotate.Y_AXIS;
         Point3D diff = target.subtract(origin);
         double height = diff.magnitude();
 
@@ -190,10 +192,6 @@ public abstract class AResidue {
     public boolean checkForLenghAndAngles(Point3D HBond1, Point3D HBondMid, Point3D NoHBond){
         double length = HBond1.distance(HBondMid);
         double angle = HBondMid.angle(HBond1, NoHBond);
-        //System.out.println("");
-        //System.out.println(length);
-        //System.out.println(angle);
-        //System.out.println(length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE);
         return (length <= myValues.HBOND_MAX_DISTANCE && angle >= myValues.HBOND_MIN_ANGLE);
     }
 }
