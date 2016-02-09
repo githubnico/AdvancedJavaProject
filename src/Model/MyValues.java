@@ -40,13 +40,13 @@ public class myValues {
 
     public static final String MENU_OPEN = "Open";
 
-    public static final String MENU_PAIRING = "Watson-Crick Pairing";
+    public static final String MENU_DOT_BRACKET = "Dot Bracket Notation";
 
     public static final String MENU_RESET_VIEW = "Reset View";
 
-    public static final String MENU_CLEAR = "Clear View";
-
     public static final String MENU_COLORING = "Coloring";
+
+    public static final String MENU_COLORS = "Color by Base";
 
     public static final String MENU_AGCU = "A/G/C/U";
 
@@ -54,7 +54,7 @@ public class myValues {
 
     public static final String MENU_PAIRED = "Paired";
 
-    public static final String MENU_GREEN_PHOSPHORUS = "Green Phosphorus";
+    public static final String MENU_ANIMATION = "Rotate Animation";
 
 
     /**
@@ -63,7 +63,7 @@ public class myValues {
 
     // Integers
 
-    public static final int NUSSINOV_ITERATIONS = 20;
+    public static final int PAIRING_ITERATIONS = 20;
 
     // Doubles
 
@@ -89,8 +89,6 @@ public class myValues {
 
     public static final PhongMaterial MATERIAL_GREEN = new PhongMaterial((Color.GREEN));
 
-    public static final PhongMaterial MATERIAL_LIGHT_GREEN = new PhongMaterial((Color.LIGHTGREEN));
-
     public static final PhongMaterial MATERIAL_BLACK = new PhongMaterial((Color.BLACK));
 
     public static final PhongMaterial MATERIAL_DARK_RED = new PhongMaterial((Color.DARKRED));
@@ -105,11 +103,23 @@ public class myValues {
 
     public static final PhongMaterial MATERIAL_YELLOW = new PhongMaterial((Color.YELLOW));
 
-    public static final PhongMaterial MATERIAL_GRAY = new PhongMaterial((Color.GRAY));
+    // Colors
 
+    public static final Color COLOR_GRAY = Color.LIGHTGRAY;
 
+    public static final Color COLOR_BLACK = Color.BLACK;
 
+    public static final Color COLOR_ORANGE = Color.ORANGE;
 
+    public static final Color COLOR_ORANGE_RED = Color.ORANGERED;
+
+    public static final Color COLOR_LIGHTSEAGREEN = Color.LIGHTSEAGREEN;
+
+    public static final Color COLOR_DARKBLUE =  Color.DARKBLUE;
+
+    public static final Color COLOR_LAWNGREEN =  Color.LAWNGREEN;
+
+    public static final Color COLOR_DARKGREEN =  Color.DARKGREEN;
 
 
     /**
